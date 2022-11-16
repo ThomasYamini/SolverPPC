@@ -37,35 +37,42 @@ public class ConstraintInf implements Constraint {
 		return true;
 	}
 
-	@Override
+	// retourne une liste de variables comprenant celles modifiées
 	public List<Variable> filter() {
-		if(this.var1.getDomainSize()==0 || this.var2.getDomainSize()==0) {
-			System.out.println("pas de solution");
-			return null;
-		}
-		else {
 		
+		//initialisation de la liste à retourner
 		List<Variable> liste_var = new ArrayList<Variable>();
 		
 		for (int j : this.var1.getDomain()) {
+			
+			//vérification d'une première contrainte sur la borne sup du domaine de la variable2
 			if (j>=this.var2.getSup()) {
+				
+				//suppression de la valeur dans le domaine de la variable1
 				this.var1.remValue(j);
 				System.out.println("la variable "+ j +" a été retirée");
 				
-				// retourne la variable qui a été modifiée
-				liste_var.add(var1);
+				// vérification de la non présence dans la variable dans la liste retournée pour ne pas effectuer la propagation trop de fois
+				if(! liste_var.contains(var1)) {
+					liste_var.add(var1);
+				}
 			}
 		}
 		for (int k : this.var2.getDomain()) {
+			
+			//vérification d'une première contrainte sur la borne sup du domaine de la variable1
 			if (k<=this.var2.getInf()) {
+				
+				//suppression de la valeur dans le domaine de la variable2
 				this.var2.remValue(k);
 				System.out.println("la variable "+ k +" a été retirée");
 				
-				// retourne la variable qui a été modifiée
-				liste_var.add(var2);
+				// vérification de la non présence dans la variable dans la liste retournée pour ne pas effectuer la propagation trop de fois
+				if(! liste_var.contains(var2)) {
+					liste_var.add(var2);
+				}
 			}
 		}
 		return liste_var;
-		}
 		}
 }

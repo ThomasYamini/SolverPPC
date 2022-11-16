@@ -94,10 +94,13 @@ public class Variable {
     	this.dom = dom;
     }
     
-    
+    // fonction retournant une liste de contrainte reliées à la variable en question
     public List<Constraint> getConstraint(Csp csp){
+    	
+    	//initialisation de la liste à retourner
     	List<Constraint>  liste_contraintes = new ArrayList<Constraint>();
-    	 for (Constraint contrainte : csp.getConstraints()) {
+    	
+    	for (Constraint contrainte : csp.getConstraints()) {
    		   for (Variable var : contrainte.getVars()) {
    			   
    			   if(this == var && ! liste_contraintes.contains(contrainte)) {

@@ -41,32 +41,35 @@ public class ConstraintDiff implements Constraint {
 		return true;
 	}
 
-	@Override
+	// retourne une liste de variables comprenant celles modifiées
 	public List<Variable> filter() {
-		if(this.var1.getDomainSize()==0 || this.var2.getDomainSize()==0) {
-			System.out.println("pas de solution");
-			return null;
-		}
-		else {
+		
+		//initialisation de la liste à retourner
 		List<Variable> liste_var = new ArrayList<Variable>();
 		
-		// sinon : on ne peut agir que si la variable a été instanciée
+		// on ne peut agir que si la variable a été instanciée
+		//si la variable est instanciée est qu'elle prend une valeur dans le domaine de l'autre variable, il faut retirer cette valeur du domaine de cette dernière
 		if (this.var1.isInstantiated() && this.var2.getDomain().contains(this.var1.getValue())) {
 			this.var2.remValue(this.var1.getValue());
 			System.out.println("la variable "+ this.var1.getValue() +" a été retirée");
 			
-			// retourne la variable qui a été modifiée
-			liste_var.add(var2);
+			// vérification de la non présence dans la variable dans la liste retournée pour ne pas effectuer la propagation trop de fois
+			if(! liste_var.contains(var2)) {
+				liste_var.add(var2);
+			}
 		}
 		
+		//si la variable est instanciée est qu'elle prend une valeur dans le domaine de l'autre variable, il faut retirer cette valeur du domaine de cette dernière
 		if(this.var2.isInstantiated() && this.var1.getDomain().contains(this.var2.getValue())) {
 			this.var1.remValue(this.var2.getValue());
 			System.out.println("la variable "+ this.var2.getValue() +" a été retirée");
 			
-			// retourne la variable qui a été modifiée
-			liste_var.add(var1);
+			// vérification de la non présence dans la variable dans la liste retournée pour ne pas effectuer la propagation trop de fois
+			if(! liste_var.contains(var1)) {
+				liste_var.add(var1);
+		}
+		
 		}
 		return liste_var;
 		}
 	}
-}

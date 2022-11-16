@@ -2,48 +2,55 @@ package definition;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 //import resolution.SearchV1;
 import resolution.SearchV2;				//a décommenter pour utiliser les fonctions backtrack
 
 public class Main {
 	public static void main(String[]args) {
+		
+		//initialisation des domaines
 		Domain x1 = new DomainBitSet(2,6);
 		Domain x2 = new DomainBitSet(4,7);
 		Domain x3 = new DomainBitSet(6,9);
-		//System.out.println(x1);
-		//System.out.println(x2);
-		//System.out.println(x3);
 		
+		//initialisation des variables
 		Variable a = new Variable(x1);
 		Variable b = new Variable(x2);
 		Variable c = new Variable(x3);
-		//System.out.println(a);
 		
+		//ajout des variables dans une liste pour pouvoir initialiser le csp plus tard
 		ArrayList<Variable> variables = new ArrayList<Variable>();
 		variables.add(a);
 		variables.add(b);
 		variables.add(c);
 		
+		//initialisation des contraintes et ajout dans une liste pour pouvoir initialiser le csp plus tard
 		List<Constraint> cons = new ArrayList<Constraint>();
 		ConstraintInfEgal cinfegal1 = new ConstraintInfEgal(b,a);
 		ConstraintInfEgal cinfegal2 = new ConstraintInfEgal(c,b);
 		cons.add(cinfegal1);
 		cons.add(cinfegal2);
 		
-		//cinfegal1.filter();
-		//cinfegal2.filter();
 		
+		//initialisation du csp
 		Csp test = new Csp(variables, cons);
 
+		//initialisation de la durée pour la résolution 
 		long tempsDebut = System.nanoTime();
+		
+		//différentes fonctions utilisées
+
 		//SearchV1.bruteForceSearch(test);
 		//SearchV1.generateAndTest(test);
 		//SearchV2.backtrack1(test);
 		//SearchV2.backtrack2(test);
 		SearchV2.backtrack3(test);
+		
+		
 		long tempsFin = System.nanoTime();
+		
+		//détermination de la durée de résolution
 		double seconds = (tempsFin - tempsDebut) / 1e9;
 		
 		System.out.println(seconds);

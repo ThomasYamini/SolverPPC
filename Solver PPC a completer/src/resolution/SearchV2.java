@@ -1,5 +1,6 @@
 package resolution;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -140,24 +141,42 @@ public class SearchV2 {
     //---------------------------------------------------------------------------------------------------
     // pour le tp3
     //---------------------------------------------------------------------------------------------------
-
+    
+    
     public static void propagation(Csp csp, Variable var_i){
-
- 	  Stack<Variable> pile = new Stack<Variable>();
- 	  pile.push(var_i);
-
- 	   while(pile != null) {
+    	
+    	//initialisation d'une pile qui va nous permettre de savoir quand arreter la propagation
+    	Stack<Variable> pile = new Stack<Variable>();
+    	
+    	//ajout de la dernière variable instanciée dans la pile
+    	pile.push(var_i);
+    	
+    	
+ 	   while(!pile.isEmpty()) {
+ 		   
+ 		   //étude de la première variable et par la fonction pop, diminution du nombre d'éléments de la pile
  		   Variable var = pile.pop();
+ 		   
  		   for (Constraint contrainte : var.getConstraint(csp)) {
+ 			   
+ 			   //utilisation de la fonction filter sur chaque contrainte liée à la variable sortie de la pile
  			   List<Variable> new_variables = contrainte.filter();
- 			   if(new_variables != null) {
- 				  for (Variable new_var : new_variables) {
- 					 pile.push(new_var);
- 					  }
- 					  }
- 				  }
- 			   }
- 		   }
+ 			   
+ 			   //si le filter modifie effectivement les domaines
+ 			   if(!new_variables.isEmpty()) {
+ 				   
+ 				   //pour chaque variable dont le domaine a été modifié
+ 				   for (Variable new_var : new_variables) {
+ 					   
+ 					   //tant que la pile ne contient pas cette variable, l'ajouter dans la pile
+ 					  if(!pile.contains(new_var)) {
+ 						  pile.push(new_var);
+ 					  	}
+ 				  	}
+ 				}
+ 			}
+ 	   	}
+ 	}
  	   
     
     
@@ -185,12 +204,28 @@ public class SearchV2 {
             	Variable y = csp.nextVarToInstantiate();
                 Domain domainclone = y.getDomain().clone();
                 
+                //initialisation d'une liste contenant tous les domaines des variables du csp
+                List<Domain> copy_list_domain = new ArrayList<Domain>();
+                
+                //copie des domaines pour les réinsérer après l'appel récursif
+                for (Variable var : csp.getVars()) {
+                	copy_list_domain.add(var.getDomain().clone());
+                }
+                
                 for (int val : domainclone) {
                     y.instantiate(val);
+                    
+                    //utilisation de propagation
                     propagation(csp, y);
-                    backtrack2(csp);
+                    
+                    backtrack3(csp);
+                    for (int i =0; i<copy_list_domain.size();i++) {
+                    	
+                    	//réinsertion des domaines clonés
+                    	csp.getVars().get(i).setDomain(copy_list_domain.get(i).clone());
+                    }
                 }
-                y.setDomain(domainclone);
+                y.setDomain(domainclone.clone());
                 }
             }
         }
